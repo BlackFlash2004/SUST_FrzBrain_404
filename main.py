@@ -4,7 +4,7 @@ from typing import Optional
 from google import genai
 from google.genai import types
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -152,7 +152,11 @@ async def analyze_ticket(request: Request):
         result = json.loads(response.text.strip())
         result["ticket_id"] = ticket["ticket_id"]
         result = validate_enums(result)
-        return JSONResponse(status_code=200, content=result)
+        return Response(
+            content=json.dumps(result, ensure_ascii=False),
+            status_code=200,
+            media_type="application/json; charset=utf-8"
+        )
 
     except json.JSONDecodeError:
         return JSONResponse(status_code=500, content={"error": "AI returned malformed JSON"})
