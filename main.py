@@ -162,6 +162,7 @@ async def analyze_ticket(request: Request):
         return JSONResponse(status_code=500, content={"error": "AI returned malformed JSON"})
     except Exception as e:
         msg = str(e)
+        print("ERROR:", msg)
         if any(k in msg.lower() for k in ("api_key", "apikey", "key")):
             msg = "Internal configuration error"
         return JSONResponse(status_code=500, content={"error": msg[:200]})
